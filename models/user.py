@@ -1,43 +1,30 @@
 #!/usr/bin/python3
-""" """
-from tests.test_models.test_base_model import test_basemodel
-from models.user import User
-import os
+"""Defines the User class."""
+from models.base_model import Base
+from models.base_model import BaseModel
+from sqlalchemy import Column
+from sqlalchemy import String
+from sqlalchemy.orm import relationship
 
 
-class test_User(test_basemodel):
-    """ test class for user model"""
+class User(BaseModel, Base):
+    """Represents a user for a MySQL database.
 
-    def __init__(self, *args, **kwargs):
-        """ user test class init"""
-        super().__init__(*args, **kwargs)
-        self.name = "User"
-        self.value = User
+    Inherits from SQLAlchemy Base and links to the MySQL table users.
 
-    def test_first_name(self):
-        """ testing user first anme attr"""
-        new = self.value()
-        self.assertEqual(type(new.first_name), str if
-                         os.getenv('HBNB_TYPE_STORAGE') != 'db' else
-                         type(None))
-
-    def test_last_name(self):
-        """ testing user last name attr"""
-        new = self.value()
-        self.assertEqual(type(new.last_name), str if
-                         os.getenv('HBNB_TYPE_STORAGE') != 'db' else
-                         type(None))
-
-    def test_email(self):
-        """ testing user email attr"""
-        new = self.value()
-        self.assertEqual(type(new.email), str if
-                         os.getenv('HBNB_TYPE_STORAGE') != 'db' else
-                         type(None))
-
-    def test_password(self):
-        """ testing user password attr"""
-        new = self.value()
-        self.assertEqual(type(new.password), str if
-                         os.getenv('HBNB_TYPE_STORAGE') != 'db' else
-                         type(None))
+    Attributes:
+        __tablename__ (str): The name of the MySQL table to store users.
+        email: (sqlalchemy String): The user's email address.
+        password (sqlalchemy String): The user's password.
+        first_name (sqlalchemy String): The user's first name.
+        last_name (sqlalchemy String): The user's last name.
+        places (sqlalchemy relationship): The User-Place relationship.
+        reviews (sqlalchemy relationship): The User-Review relationship.
+    """
+    __tablename__ = "users"
+    email = Column(String(128), nullable=False)
+    password = Column(String(128), nullable=False)
+    first_name = Column(String(128))
+    last_name = Column(String(128))
+    places = relationship("Place", backref="user", cascade="delete")
+    reviews = relationship("Review", backref="user", cascade="delete")
